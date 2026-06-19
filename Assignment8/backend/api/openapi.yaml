@@ -1,0 +1,336 @@
+#
+# CSE186 Assignment 8 Backend
+#
+
+openapi: '3.0.3'
+
+info:
+  description: CSE186 Assignment 8 Backend
+  version: 4.1.0
+  title: CSE186 Assignment 8 Backend
+
+servers:
+  - url: http://localhost:3010/api/v0
+
+paths:
+  /login:
+    post:
+      summary: Grab Login Info and Verify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+              
+      responses:
+        200:
+          description: Login Succesful, Return JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: Invalid Credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+
+  /post:
+      get:
+        summary: Grab All Posts Authenticated User is allowed to see
+        security:
+          - bearerAuth: []
+        responses:
+          200:
+            description: Authenticated, Show Posts
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Post'
+          401:
+            description: Unauthorized Access
+      post:
+        summary: Create Post
+        security:
+          - bearerAuth: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - content
+                  - isPublic
+                properties:
+                  content:
+                    type: string
+                  isPublic:
+                    type: boolean
+                  groupID:        # optional, if your post belongs to a group
+                    type: string
+                    nullable: true
+        responses:
+          201:
+            description: Authenticated, Created Post
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Post'
+          401:
+            description: Unauthorized Access
+  
+  /post/{postid}/like:
+    post:
+      summary: Grab Liked Post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: postid
+          in: path
+          description: Post UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Post Liked, Return Post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: Bad Request
+        401:
+          description: Unauthorized Access
+    delete:
+      summary: Remove Like
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: postid
+          in: path
+          description: Post UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Unliked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: Bad Request
+        401:
+          description: Unauthorized Access
+
+  /post/mine:
+    get:
+      summary: Grab Current User's Posts
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Authenticated, Show Posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        401:
+          description: Unauthorized Access
+
+  /group:
+    get:
+      summary: Grab All Groups
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Authenticated - Grab all Group Names
+          content:
+            application/json:
+              schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Groups'
+        401:
+          description: Unauthorized Access
+
+
+  /group/{id}/post:
+    get:
+      summary: Grab All Posts from Group ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Group UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+          200:
+            description: Authenticated, Show Posts
+            content:
+              application/json:
+               schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/GroupPost'
+
+components:
+  securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+
+  schemas:
+    Credentials:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "molly@books.com"
+        password:
+          type: string
+          format: password
+          example: "mollymember"
+      required:
+        - email
+        - password
+
+    User:
+      type: object
+      required:
+        - user
+        - accessToken
+      properties:
+        user:
+          type: object
+          required:
+            - id
+            - email
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            email:
+              type: string
+        accessToken:
+          type: string
+
+    Groups:
+      type: object
+      required:
+        - groupid
+        - groupname
+        - description
+      properties:
+        groupid:
+          type: string
+          format: uuid
+        groupname:
+          type: string
+        description:
+          type: string
+      example:
+        groupID: "c067e1c4-71e5-4806-b603-32092ea72f99"
+        groupName: "Guitars"
+        description: "All about Guitars"
+
+    GroupPost:
+      type: object
+      required:
+        - groupID
+        - posts
+      properties:
+        groupID:
+          type: string
+          format: uuid
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+      example:
+        groupID: "c067e1c4-71e5-4806-b603-32092ea72f99"
+        posts:
+          - postID: "a5d62be7-e60d-4c5c-a67a-d8ff1aeadfea"
+            userID: "42e4a0d2-02a4-499c-b9c5-4771630b9936"
+            username: "Aye Astro"
+            email: "ayeastro@gmail.com"
+            content: "Fender Stratocaster"
+            date: "2025-05-05T20:15:12.123Z"
+            isPublic: true
+          - postID: "e6dcf110-485b-4993-9976-37d09aabf2ca"
+            userID: "42e4a0d2-02a4-499c-b9c5-4771630b9936"
+            username: "Aye Astro"
+            email: "ayeastro@gmail.com"
+            content: "Fender Telecaster"
+            date: "2025-05-05T20:15:12.123Z"
+            isPublic: true
+
+    Post:
+      description: Singular Post
+      type: object
+      required:
+        - postID
+        - userID
+        - username
+        - email
+        - content
+        - date
+        - isPublic
+        - likes
+        - likedByMe
+      properties:
+        postID:
+          type: string
+          format: uuid
+        userID:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        content:
+          type: string
+        date:
+          type: string
+          format: date-time
+        isPublic:
+          type: boolean
+        likes:
+          type: integer
+        likedByMe:
+          type: boolean
+      example:
+          postID: "3f4c6e4b-7a65-4a1e-8d2c-5f6dce9f2a2a"
+          userID: "3f4c6e4b-7a65-4a1e-8d2c-5f6dce9f2f2f"
+          username: "Aye Astro"
+          email: "ayeastro@gmail.com"
+          content: "Hello world!"
+          date: "2026-03-04T20:15:12.123Z"
+          isPublic: true
+          likes: 200
+          likedByMe: false

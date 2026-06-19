@@ -1,0 +1,25 @@
+# # Environment variables (both frontend & backend)
+# .env
+# .env.*
+# **/.env
+
+# # Node dependencies (any folder)
+# node_modules/
+# **/node_modules/
+
+# # Logs
+# *.log
+
+# # OS files
+# .DS_Store
+
+# # Build outputs
+# dist/
+# build/
+
+# # Zip Files
+# *.zip
+
+# # Package Files
+# # **/package-lock.json
+# # **/package.json
