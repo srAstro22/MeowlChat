@@ -10,7 +10,7 @@
 */
 import express from 'express';
 import cors from 'cors';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'node:path';

@@ -22,7 +22,6 @@ import * as userModel from '../model/user.js';
  * @returns {string} error Code
  */
 export async function check(req, res, next) {
-  console.log("CHECK USER:", data);
   try {
     const authHeader = req.headers.authorization;
 
