@@ -50,7 +50,7 @@ app.use('/api/v0/docs', swaggerUi.serve, swaggerUi.setup(apidoc));
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:4173',
-  'https://meowlchat.onrender.com'
+  'https://meowlchat-g88n.onrender.com'
 ];
 
 // Render Version
