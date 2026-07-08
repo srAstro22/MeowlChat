@@ -22,8 +22,7 @@ import http from 'http';
 // Model and Routes
 import {check} from './middleware/auth.js';
 import {login} from './route/login.js';
-import {getAll, getGroups, getGroupPosts} from './route/posts.js';
-
+import {getAll, getMyPosts, getGroups, getGroupPosts, createPost, likePost, unlikePost} from './route/posts.js';
 // console.log("POSTGRES_USER:", process.env.POSTGRES_USER);
 // console.log("POSTGRES_PASSWORD:", process.env.POSTGRES_PASSWORD);
 // console.log("POSTGRES_DB:", process.env.POSTGRES_DB);
@@ -86,6 +85,10 @@ app.get('/', (req, res) => {
 
 app.post('/api/v0/login', login);
 app.get('/api/v0/post', check, getAll);
+app.get('/api/v0/post/mine', check, getMyPosts);
+app.post('/api/v0/post', check, createPost);
+app.post('/api/v0/post/:postid/like', check, likePost);
+app.delete('/api/v0/post/:postid/like', check, unlikePost);
 app.get('/api/v0/group', check, getGroups);
 app.get('/api/v0/group/:groupID/post', check, getGroupPosts);
 
