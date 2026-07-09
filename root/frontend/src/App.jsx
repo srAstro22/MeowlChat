@@ -47,7 +47,6 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [groupNames, setGroupNames] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('accessToken'));
-  const [backendReady, setBackendReady] = useState(false);
   const [checkingBackend, setCheckingBackend] = useState(true);
   const [backendFailed, setBackendFailed] = useState(false);
 
@@ -66,7 +65,6 @@ function App() {
       apiFetch('/api/v0/health', {method: 'GET'})
           .then((res) => {
             if (res.ok) {
-              setBackendReady(true);
               setCheckingBackend(false);
             } else {
               throw new Error('not ready');
