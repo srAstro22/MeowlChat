@@ -13,6 +13,16 @@ servers:
   - url: http://localhost:3010/api/v0
 
 paths:
+
+  /health:
+    get:
+      summary: Spinup Health Check
+      responses:
+        200:
+          description: Spinup Succesful
+        503:
+          description: Service Unavailable
+
   /login:
     post:
       summary: Grab Login Info and Verify

@@ -26,7 +26,7 @@ export async function check(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Missing token' });
+      return res.status(401).json({error: 'Missing token'});
     }
 
     const token = authHeader.split(' ')[1];
@@ -36,14 +36,13 @@ export async function check(req, res, next) {
     const user = await userModel.retrieveById(data.id);
 
     if (!user) {
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(401).json({error: 'User not found'});
     }
 
     req.user = user;
     next();
-
   } catch (err) {
     console.error('AUTH ERROR:', err);
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({error: 'Invalid token'});
   }
 }

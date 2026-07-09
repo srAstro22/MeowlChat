@@ -1,6 +1,10 @@
 // This will be used when we get into requests for the app
 import * as postsModel from '../model/posts.js';
 
+export const healthCheck = (req, res) => {
+  res.status(200).json({status: 'ok'});
+};
+
 /**
  *
  * @param {string} req - not used
@@ -33,7 +37,7 @@ export async function getMyPosts(req, res) {
  * @returns {string} - Groups they are a part of
  */
 export async function getGroups(req, res) {
-  console.log("GET GROUPS USER:", req.user);
+  console.log('GET GROUPS USER:', req.user);
   const userID = (await req.user).id;
   const groups = await postsModel.retrieveGroups(userID);
 

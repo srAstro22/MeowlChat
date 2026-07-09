@@ -20,22 +20,21 @@ import * as authModel from '../model/auth.js';
  * @returns {string} status
  */
 export async function login(req, res) {
-  console.log("LOGIN HIT");
+  console.log('LOGIN HIT');
   try {
-    const { email, password } = req.body;
+    const {email, password} = req.body;
 
     const user = await userModel.retrieveByCredentials(email, password);
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({error: 'Invalid credentials'});
     }
 
-    const accessToken = authModel.sign({ id: user.id });
+    const accessToken = authModel.sign({id: user.id});
 
-    return res.status(200).json({ user, accessToken });
-
+    return res.status(200).json({user, accessToken});
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    return res.status(500).json({ error: "Server error" });
+    console.error('LOGIN ERROR:', err);
+    return res.status(500).json({error: 'Server error'});
   }
 }

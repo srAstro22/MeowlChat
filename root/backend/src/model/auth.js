@@ -18,14 +18,10 @@ import jwt from 'jsonwebtoken';
  * @returns {string} tokenized
  */
 export function verify(token) {
-  try {
-    const data = jwt.verify(token, process.env.JWT_SECRET);
-    delete data.iat;
-    delete data.exp;
-    return data;
-  } catch (err) {
-    throw err;
-  }
+  const data = jwt.verify(token, process.env.JWT_SECRET);
+  delete data.iat;
+  delete data.exp;
+  return data;
 }
 
 /**

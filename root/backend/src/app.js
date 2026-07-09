@@ -14,7 +14,7 @@ import * as yaml from 'js-yaml';
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'node:path';
-import OpenApiValidator from 'express-openapi-validator';
+// import OpenApiValidator from 'express-openapi-validator';
 import {fileURLToPath} from 'node:url';
 import http from 'http';
 
@@ -22,7 +22,15 @@ import http from 'http';
 // Model and Routes
 import {check} from './middleware/auth.js';
 import {login} from './route/login.js';
-import {getAll, getMyPosts, getGroups, getGroupPosts, createPost, likePost, unlikePost} from './route/posts.js';
+import {getAll,
+  getMyPosts,
+  getGroups,
+  getGroupPosts,
+  createPost,
+  likePost,
+  unlikePost,
+  healthCheck}
+  from './route/posts.js';
 // console.log("POSTGRES_USER:", process.env.POSTGRES_USER);
 // console.log("POSTGRES_PASSWORD:", process.env.POSTGRES_PASSWORD);
 // console.log("POSTGRES_DB:", process.env.POSTGRES_DB);
@@ -49,7 +57,7 @@ app.use('/api/v0/docs', swaggerUi.serve, swaggerUi.setup(apidoc));
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:4173',
-  'https://meowlchat-g88n.onrender.com'
+  'https://meowlchat-g88n.onrender.com',
 ];
 
 // Render Version
@@ -80,9 +88,10 @@ app.use((err, req, res, next) => {
 
 // Health Check
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'Backend is running' });
+  res.json({status: 'ok', message: 'Backend is running'});
 });
 
+app.get('/api/v0/health', healthCheck);
 app.post('/api/v0/login', login);
 app.get('/api/v0/post', check, getAll);
 app.get('/api/v0/post/mine', check, getMyPosts);

@@ -30,6 +30,11 @@ const drawerWidth = 240;
 import {useTheme} from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+// MUI Imports
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
 // API Fetch
 import {apiFetch} from './api/client';
 
@@ -42,12 +47,43 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [groupNames, setGroupNames] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('accessToken'));
+  const [backendReady, setBackendReady] = useState(false);
+  const [checkingBackend, setCheckingBackend] = useState(true);
+  const [backendFailed, setBackendFailed] = useState(false);
 
-  // Chat Generated
+
   // Determines whether we are in Mobile or Not
   const theme = useTheme();
   const isMobile =
   useMediaQuery(theme.breakpoints.down('md')); // true for mobile
+
+  // Ping Backend / Wait to Spinup
+  useEffect(() => {
+    let attempts = 0;
+    const maxAttempts = 30; // Fail Safe Startup
+
+    const checkBackend = () => {
+      apiFetch('/api/v0/health', {method: 'GET'})
+          .then((res) => {
+            if (res.ok) {
+              setBackendReady(true);
+              setCheckingBackend(false);
+            } else {
+              throw new Error('not ready');
+            }
+          })
+          .catch(() => {
+            attempts += 1;
+            if (attempts < maxAttempts) {
+              setTimeout(checkBackend, 3000);
+            } else {
+              setCheckingBackend(false);
+              setBackendFailed(true);
+            }
+          });
+    };
+    checkBackend();
+  }, []);
 
   // GET Users Group Names
   useEffect(() => {
@@ -72,6 +108,48 @@ function App() {
 
         .then((data) => setGroupNames(data));
   }, [token]);
+
+  // Spin Up Loading Bar
+  if (checkingBackend) {
+    return (
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        px: 4,
+      }}>
+        <Typography variant="body1" sx={{mb: 2}}>
+          Connecting to server, this may take up to a minute...
+        </Typography>
+        <Box sx={{width: '100%', maxWidth: 400}}>
+          <LinearProgress />
+        </Box>
+      </Box>
+    );
+  }
+
+  if (backendFailed) {
+    return (
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        px: 4,
+        textAlign: 'center',
+      }}>
+        <Typography variant="h6" sx={{mb: 1}}>
+          Unable to connect to server
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Please contact the application owner if this issue persists.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <LayoutContext.Provider value = {{
