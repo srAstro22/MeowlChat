@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import meowlAvatar from './view/meowlAvatar.jpg';
+import meowlAvatar from './meowlAvatar.jpg';
 
 // React Stuff
 import {useNavigate, useLocation} from 'react-router-dom';
