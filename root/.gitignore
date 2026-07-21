@@ -1,25 +1,30 @@
-# # Environment variables (both frontend & backend)
-# .env
-# .env.*
-# **/.env
+# Environment variables (root, frontend, backend, e2e, anywhere)
+.env
+.env.*
+**/.env
+**/.env.*
 
-# # Node dependencies (any folder)
-# node_modules/
-# **/node_modules/
+# Node dependencies (any folder, any depth)
+node_modules/
+**/node_modules/
 
-# # Logs
-# *.log
+# Logs
+*.log
+**/*.log
 
-# # OS files
-# .DS_Store
+# OS files
+.DS_Store
+**/.DS_Store
 
-# # Build outputs
-# dist/
-# build/
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
 
-# # Zip Files
-# *.zip
+# Zip files
+*.zip
+**/*.zip
 
-# # Package Files
-# # **/package-lock.json
-# # **/package.json
+# Coverage Meter
+coverage/
